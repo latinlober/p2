@@ -7,6 +7,8 @@ OPTIONS=$4
 
 cwd=${PWD##*/}
 
+
+echo "BUILD_FLAGS: $BUILD_FLAGS"
 export GCC_COLORS="error=01;31:warning=01;33:note=01;36:locus=00;34"
 
 #==============================================================================

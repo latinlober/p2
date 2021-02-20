@@ -1,3 +1,4 @@
+#include "Game.h"
 #include "Platform/Platform.hpp"
 
 int main()
@@ -8,34 +9,30 @@ int main()
 	std::cout << "Hello World!" << std::endl;
 #endif
 
-	sf::RenderWindow window;
-	// in Windows at least, this must be called before creating the window
-	float screenScalingFactor = platform.getScreenScalingFactor(window.getSystemHandle());
-	// Use the screenScalingFactor
-	window.create(sf::VideoMode(200.0f * screenScalingFactor, 200.0f * screenScalingFactor), "SFML works!");
-	platform.setIcon(window.getSystemHandle());
+	std::srand(static_cast<unsigned>(time(NULL)));
+	// init game engine
+	Game mygame;
 
-	sf::CircleShape shape(window.getSize().x / 2);
-	shape.setFillColor(sf::Color::White);
+	// Create the main window
 
-	sf::Texture shapeTexture;
-	shapeTexture.loadFromFile("content/sfml.png");
-	shape.setTexture(&shapeTexture);
+	// Load a sprite to display
+	/*
+    sf::Texture texture;
+    if (!texture.loadFromFile("cb.bmp"))
+        return EXIT_FAILURE;
+    sf::Sprite sprite(texture);
+    */
 
-	sf::Event event;
-
-	while (window.isOpen())
+	// Start the game loop
+	while (mygame.running())
 	{
-		while (window.pollEvent(event))
-		{
-			if (event.type == sf::Event::Closed)
-				window.close();
-		}
 
-		window.clear();
-		window.draw(shape);
-		window.display();
+		mygame.update();
+
+		mygame.render();
 	}
+
+	return EXIT_SUCCESS;
 
 	return 0;
 }

@@ -12,7 +12,8 @@
 	"linux": {
 		"options": {
 			"env": {
-				"PATH": "${config:terminal.integrated.env.linux.PATH}"
+				"PATH": "${config:terminal.integrated.env.linux.PATH}",
+				"CFLAGS": "-Wno-error -Wno-ignored-qualifiers -Wno-sign-compare"
 			}
 		}
 	},

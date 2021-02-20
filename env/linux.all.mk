@@ -1,5 +1,5 @@
 CC := g++
-CFLAGS := $(CFLAGS) -fpic
+CFLAGS := $(CFLAGS) -fpic -Wno-error -Wno-ignored-qualifiers -Wno-sign-compare
 
 LIB_DIRS := \
 	/usr/local/lib
