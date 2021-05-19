@@ -34,7 +34,14 @@ void Tank::initTank(float tankPosX, float tankPosY, float tankRotation, float ta
 
 	//cannon
 	this->cannon.setPointCount(6);
-
+	/*
+	this->cannon.setPoint(0, sf::Vector2f(0, 0));
+	this->cannon.setPoint(1, sf::Vector2f(0, 7));
+	this->cannon.setPoint(2, sf::Vector2f(5, 4));
+	this->cannon.setPoint(3, sf::Vector2f(13, 4));
+	this->cannon.setPoint(4, sf::Vector2f(13, 3));
+	this->cannon.setPoint(5, sf::Vector2f(5, 3));
+*/
 	this->cannon.setPoint(0, sf::Vector2f(7, 0));
 	this->cannon.setPoint(1, sf::Vector2f(7, 7));
 	this->cannon.setPoint(2, sf::Vector2f(12, 4));
@@ -167,16 +174,17 @@ void Tank::update(bool go_forward, bool go_back, bool rotate_clockwise, bool rot
 	sf::Vector2f veBase, veCannon;
 
 	frBase = this->base.getLocalBounds();
-	this->base.setOrigin(8.f, 5.5f);
+	this->base.setOrigin(frBase.width / 2, frBase.height / 2);
 	this->base.setRotation(this->tankRotation);
 	this->base.setScale(this->tankScale, this->tankScale);
 	this->base.setPosition(sf::Vector2f(this->tankPosX, this->tankPosY));
 	veBase = this->base.getOrigin();
 
 	frCannon = this->cannon.getLocalBounds();
-	this->cannon.setOrigin(6.5f, 3.5f);
+	this->cannon.setOrigin(frCannon.width / 2, frCannon.height / 2);
 	this->cannon.setRotation(this->tankRotation);
 	this->cannon.setScale(this->tankScale, this->tankScale);
+	//this->cannon.setPosition(sf::Vector2f(this->tankPosX + (this->tankScale * frCannon.width / 2), this->tankPosY));
 	this->cannon.setPosition(sf::Vector2f(this->tankPosX, this->tankPosY));
 	veCannon = this->cannon.getOrigin();
 
@@ -192,8 +200,39 @@ void Tank::render(sf::RenderTarget& target)
 
 void Tank::spanwBullet()
 {
+	//calculate bullet start position offset
+
 	Bullet mybullet;
-	mybullet.initBullet(this->tankPosX, this->tankPosY, this->tankRotation, 1, 200);
+	float X, Y, bulletcos, bulletsin;
+	if (this->tankRotation == 0)
+	{
+		X = 1 * 14 * this->tankScale;
+		Y = 0;
+	}
+	else if (this->tankRotation == 90)
+	{
+		X = 0;
+		Y = 1 * 14 * this->tankScale;
+	}
+	else if (this->tankRotation == 180)
+	{
+		X = -1 * 14 * this->tankScale;
+		Y = 0;
+	}
+	else if (this->tankRotation == 270)
+	{
+		X = 0;
+		Y = -1 * 14 * this->tankScale;
+	}
+	else
+	{
+		bulletcos = cos((this->tankRotation) * PI / 180.0);
+		bulletsin = sin((this->tankRotation) * PI / 180.0);
+		X = bulletcos * 14 * this->tankScale;
+		Y = bulletsin * 14 * this->tankScale;
+	}
+
+	mybullet.initBullet(this->tankPosX + X, this->tankPosY + Y, this->tankRotation, 1, 200);
 	this->bullets.push_back(mybullet);
 }
 
@@ -202,6 +241,11 @@ void Tank::updateBullets()
 	for (int i = 0; i < this->bullets.size(); i++)
 	{
 		this->bullets[i].update();
+		// delete bullet out of screen
+		if (this->bullets[i].getPosX() > 1980 || this->bullets[i].getPosX() < 0 || this->bullets[i].getPosY() > 1080 || this->bullets[i].getPosY() < 0)
+		{
+			this->bullets.erase(this->bullets.begin() + i);
+		}
 	}
 }
 

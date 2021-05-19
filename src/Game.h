@@ -22,7 +22,7 @@
 class Game
 {
 public:
-	Game();
+	Game(bool serverMode, bool clientMode, std::string remotePlayer, std::int16_t remotePort);
 	virtual ~Game();
 
 	void pollEvents();
@@ -71,6 +71,14 @@ private:
 	float tankScale;
 	float tankSpeed;
 
+	// network params
+	bool serverMode;
+	bool clientMode;
+	std::string remotePlayer;
+	std::int16_t remotePort;
+	sf::UdpSocket socketServer;
+	sf::UdpSocket socketClient;
+
 	//tank input events
 	bool go_forward;
 	bool go_back;
@@ -83,6 +91,7 @@ private:
 	void initText();
 	void initGround();
 	void initTank();
+	void initNetwork(bool serverMode, bool clientMode, std::string remotePlayer, std::int16_t remotePort);
 };
 
 #endif // GAME_H

@@ -1,12 +1,13 @@
 #include "Game.h"
 
-Game::Game()
+Game::Game(bool serverMode, bool clientMode, std::string remotePlayer, std::int16_t remotePort)
 {
 	//ctor
 	this->initVariables();
 	this->initWindow();
 	this->initFonts();
 	this->initText();
+	this->initNetwork(serverMode, clientMode, remotePlayer, remotePort);
 }
 
 Game::~Game()
@@ -146,6 +147,52 @@ void Game::initTank()
 
 	// init tank
 	this->tank.initTank(this->tankPosX, this->tankPosY, this->tankRotation, this->tankScale, this->tankSpeed);
+}
+
+void Game::initNetwork(bool serverMode, bool clientMode, std::string remotePlayer, std::int16_t remotePort)
+{
+	this->serverMode = serverMode;
+	this->clientMode = clientMode;
+	this->remotePlayer = remotePlayer;
+	this->remotePort = remotePort;
+
+	// bind the socket to a port
+	if (socketServer.bind(6666) != sf::Socket::Done)
+	{
+		// error...
+		std::cout << "Error openning local upd socket 6666. Review it !!!" << std::endl;
+	}
+	//waiting for peer
+	if (serverMode)
+	{
+		char data[100];
+		std::size_t received;
+		sf::IpAddress sender;
+		unsigned short port;
+		if (socketServer.receive(data, 100, received, sender, port) != sf::Socket::Done)
+		{
+			// error...
+			std::cout << "Error reciving data from " << sender << std::endl;
+			exit(1);
+		}
+		std::cout << "Received " << received << " bytes from " << sender << " on port " << port << std::endl;
+		this->remotePlayer = sender.toString();
+		this->remotePort = 6666;
+	}
+	else
+	{
+		// initiate conn to server
+		char data[100];
+		sf::IpAddress recipient = this->remotePlayer;
+		unsigned short port = this->remotePort;
+		if (socketClient.send(data, 100, recipient, port) != sf::Socket::Done)
+		{
+			// error...
+			std::cout << "Error sending data to " << recipient << std::endl;
+			exit(1);
+		}
+		std::cout << "Sended message to " << recipient << " on port " << port << std::endl;
+	}
 }
 
 void Game::initVariables()

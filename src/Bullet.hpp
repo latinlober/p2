@@ -29,5 +29,7 @@ public:
 	void initBullet(float bulletPosX, float bulletPosY, float bulletRotation, float bulletScale, float bulletSpeed);
 	void update();
 	void render(sf::RenderTarget& target);
+	float getPosX();
+	float getPosY();
 };
 #endif
